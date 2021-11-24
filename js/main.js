@@ -236,16 +236,18 @@ function gameOver() {
     if (renderedGameOver) {
         return 
     }
-
     removeElements();
 
     deadImg = createImg('Assets/playerDead.png');
     endButton = createButton('Restart?');
     endDiv = createDiv('Game Over');
+    showScoreDiv = createDiv(`score: ${score}`);
+    showScoreDiv.addClass('scoreDiv');
     
-    endDiv.position(windowWidth/2 - 300, windowHeight/2 - 200);
-    deadImg.position(windowWidth/2-120, windowHeight/2-60);
-    endButton.position(windowWidth/2 - 150, windowHeight/2 + 100);
+    endDiv.position(windowWidth/2-260, windowHeight/2 - 200);
+    deadImg.position(windowWidth/2-100, windowHeight/2-60);
+    endButton.position(windowWidth/2-130, windowHeight/2 + 100);
+    showScoreDiv.position(windowWidth/2-100, windowHeight/2 + 30);
     endButton.mousePressed(toPlay);
 
     zombies = [];
