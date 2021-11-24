@@ -1,0 +1,31 @@
+canvas {
+  display: block;
+}
+
+button {
+  border-radius: 10px;
+  font-family: "Roboto Condensed", sans-serif;
+  color: white;
+  font-size: 50px;
+  padding: 10px;
+  background-color: rgb(99, 39, 82);
+}
+
+div {
+  font-family: "Roboto Mono", monospace;
+  font-weight: 700;
+  font-size: 90px;
+  color: white;
+}
+
+.scoreDiv {
+  font-size: 20px;
+  border-radius: 10px;
+  background-color: black;
+  padding: 10px;
+}
+
+/* 
+button:hover {
+  background-color: rgb(77, 184, 191);
+} */
