@@ -4,15 +4,16 @@ canvas {
 
 button {
   border-radius: 10px;
-  font-family: "Roboto Condensed", sans-serif;
+  font-family: PixelGameFont, "Roboto Condensed", sans-serif;
   color: white;
   font-size: 50px;
-  padding: 10px;
+  padding: 10px 10px 10px 17px;
   background-color: rgb(99, 39, 82);
+  cursor: pointer;
 }
 
 div {
-  font-family: "Roboto Mono", monospace;
+  font-family: PixelGameFont, "Roboto Condensed", sans-serif;
   font-weight: 700;
   font-size: 90px;
   color: white;
