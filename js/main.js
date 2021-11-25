@@ -1,4 +1,5 @@
 let startBackground;
+let song;
 let gameState;
 let startDiv;
 let endDiv;
@@ -44,7 +45,10 @@ let landminesTemp = [];
 
 function preload() {
     fontRegular = loadFont('Assets/PixelGameFont.ttf');
-    //gif_loadImg = loadImage('Assets/explosion7.gif');
+    mouseclick = loadSound('Assets/mouse-click.mp3')
+    song = loadSound('Assets/inTheEnd.mp3');
+    gunshot = loadSound('Assets/gunshot.mp3');
+    explosionSound = loadSound('Assets/explosion1.mp3');
   }
 
 function setup() {
@@ -52,6 +56,7 @@ function setup() {
     textFont(fontRegular);
     createCanvas(windowWidth, windowHeight);
     startBackground = loadImage('Assets/startMenuBackground.jpeg');
+    
 
     playerFront = loadImage('Assets/playerFront.png');
     playerBack = loadImage('Assets/playerBack.png');
@@ -254,12 +259,16 @@ function renderImages() {
 }
 
 function toPlay() {
+    
     renderImagesStart = false;
     renderedGameOver = false;
 
     removeElements();
 
+    mouseclick.play();
     gameState = 'play';
+    song.setVolume(0.8);
+    song.play();
     console.log('toplay');
 
     score=0;
@@ -420,6 +429,8 @@ function draw() {
 
 
         if (keyIsDown(65) && (Date.now()-timeLastShot) > timeBetweenShots) {
+            gunshot.setVolume(0.5);
+            gunshot.play();
             timeLastShot=Date.now();
             projectiles.push(new Projectile(player.playerDir, player.posX, player.posY, 10));
         }
@@ -447,6 +458,8 @@ function draw() {
             image(landmine.img, landmine.posX, landmine.posY, 15, 15); 
 
             if (landmine.timeToExplode < Date.now() && landmine.timeToExplode+600>Date.now()) {
+                explosionSound.setVolume(0.3);
+                explosionSound.play();
                 landmine.explode();
                 image(landmine.img, landmine.posX-50, landmine.posY-50, 150, 150);
                 console.log(landmines);
@@ -510,5 +523,6 @@ function draw() {
 
     if (gameState==='over') {
         gameOver();
+        song.stop();
     }
 }
