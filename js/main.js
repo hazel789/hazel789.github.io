@@ -124,16 +124,16 @@ class Zombie {
         this.posY=posY
         this.speed=speed
         this.radius=radius
-        this.speed = speed + 0.5*score;
+        this.speed = speed + 0.25*score;
 
         if (direction===0) {  // left
-            this.img=zombieRight;
-            this.velocityX = this.speed;
+            this.img=zombieLeft;
+            this.velocityX = -this.speed;
             this.velocityY = 0;
 
         } else if (direction===1) { //right
-            this.img=zombieLeft;
-            this.velocityX = -this.speed;
+            this.img=zombieRight;
+            this.velocityX = this.speed;
             this.velocityY = 0;
 
         } else if (direction===2) { //down
@@ -153,27 +153,28 @@ class Zombie {
     }
 
     changeDirection(direction) {
-    if (direction===0) {  // left
-        this.img=zombieLeft;
-        this.velocityX = -this.speed;
-        this.velocityY = 0;
+        this.direction = direction
+        if (direction===0) {  // left
+            this.img=zombieLeft;
+            this.velocityX = -this.speed;
+            this.velocityY = 0;
 
-    } else if (direction===1) { //right
-        this.img=zombieRight;
-        this.velocityX = this.speed;
-        this.velocityY = 0;
+        } else if (direction===1) { //right
+            this.img=zombieRight;
+            this.velocityX = this.speed;
+            this.velocityY = 0;
 
-    } else if (direction===2) { //down
-        this.img=zombieFront;
-        this.velocityX = 0;
-        this.velocityY = this.speed;
+        } else if (direction===2) { //down
+            this.img=zombieFront;
+            this.velocityX = 0;
+            this.velocityY = this.speed;
 
-    } else if (direction===3) { //up
-        this.img=zombieBack;
-        this.velocityX = 0;
-        this.velocityY = -this.speed;
+        } else if (direction===3) { //up
+            this.img=zombieBack;
+            this.velocityX = 0;
+            this.velocityY = -this.speed;
+        }
     }
-}
 }
 
 class Projectile {
@@ -228,7 +229,10 @@ class Landmine {
 
 function renderImagesStart() {
     image(startBackground, 0, 0, windowWidth, windowHeight);
-
+    if (keyIsDown(32)) {
+        toPlay();
+        return;
+    }
     if (renderStartDone) {
         return;
     }
@@ -244,6 +248,7 @@ function renderImagesStart() {
     startDiv.position(windowWidth/2 - 470, windowHeight/2 - 220);
     startButton.position(windowWidth/2 - 170, windowHeight/2 + 100);
     startButton.mousePressed(toPlay);
+
     renderStartDone = true;
 }
 
@@ -267,9 +272,8 @@ function toPlay() {
 
     mouseclick.play();
     gameState = 'play';
-    song.setVolume(0.5);
+    song.setVolume(0.4);
     song.play();
-    console.log('toplay');
 
     score=0;
     scoreDiv = createDiv(`score: ${score}`);
@@ -281,6 +285,12 @@ function gameOver() {
 
     image(startBackground, 0, 0, windowWidth, windowHeight);
 
+    if (keyIsDown(32)) {
+        removeElements();
+        toPlay();
+        return;
+    }
+    
     if (renderedGameOver) {
         return 
     }
@@ -299,6 +309,7 @@ function gameOver() {
     endButton.position(windowWidth/2-170, windowHeight/2 + 100);
     showScoreDiv.position(windowWidth/2-90, windowHeight/2 + 30);
     endButton.mousePressed(toPlay);
+    
 
     zombies = [];
     projectiles = [];
@@ -354,6 +365,7 @@ function randomMove() {
         zombie.move();
 
         if (capBoundary(zombie)) {
+            console.log("hit wall")
             if(zombie.direction===0) {
                 zombie.changeDirection(1);
 
@@ -452,9 +464,13 @@ function draw() {
             landmines.push(new Landmine(player.posX, player.posY+30));
         }
 
-        //landminesTemp=[];
+        landminesTemp=[];
 
         for (landmine of landmines) {
+            
+            if (Date.now() < landmine.timeToExplode+600) {
+                landminesTemp.push(landmine);
+            }
             image(landmine.img, landmine.posX, landmine.posY, 15, 15); 
 
             if (landmine.timeToExplode < Date.now() && landmine.timeToExplode+600>Date.now()) {
@@ -462,7 +478,6 @@ function draw() {
                 explosionSound.play();
                 landmine.explode();
                 image(landmine.img, landmine.posX-50, landmine.posY-50, 150, 150);
-                console.log(landmines);
 
                 let zombiesTemp2 =[];
 
@@ -481,11 +496,12 @@ function draw() {
                 zombies = zombiesTemp2;
             }
         }
+        landmines = landminesTemp
 
-        if (zombies.length < 20 + 0.5*score && Date.now()-timeLastSpawned>timeBetweenSpawns) {
+        if (zombies.length < 10 + 0.5*score && Date.now()-timeLastSpawned>timeBetweenSpawns) {
             timeLastSpawned=Date.now();
-            zombies.push(new Zombie(zombieDir[0], 0, Math.floor(Math.random()*(windowHeight-200))+100, 1));
-            zombies.push(new Zombie(zombieDir[1], windowWidth, Math.floor(Math.random()*(windowHeight-200))+100, 1));
+            zombies.push(new Zombie(zombieDir[1], 0, Math.floor(Math.random()*(windowHeight-200))+100, 1));
+            zombies.push(new Zombie(zombieDir[0], windowWidth, Math.floor(Math.random()*(windowHeight-200))+100, 1));
         }
 
         randomMove();
@@ -522,7 +538,9 @@ function draw() {
     }
 
     if (gameState==='over') {
-        gameOver();
         song.stop();
+        gameOver();
+
     }
 }
+
