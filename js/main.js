@@ -147,26 +147,26 @@ class Zombie {
         this.posY += this.velocityY;
     }
 
-    changeDirection(direction, speed=this.speed) {
+    changeDirection(direction) {
     if (direction===0) {  // left
         this.img=zombieLeft;
-        this.velocityX = -speed;
+        this.velocityX = -this.speed;
         this.velocityY = 0;
 
     } else if (direction===1) { //right
         this.img=zombieRight;
-        this.velocityX = speed;
+        this.velocityX = this.speed;
         this.velocityY = 0;
 
     } else if (direction===2) { //down
         this.img=zombieFront;
         this.velocityX = 0;
-        this.velocityY = speed;
+        this.velocityY = this.speed;
 
     } else if (direction===3) { //up
         this.img=zombieBack;
         this.velocityX = 0;
-        this.velocityY = -speed;
+        this.velocityY = -this.speed;
     }
 }
 }
@@ -466,7 +466,7 @@ function draw() {
             }
         }
 
-        if (zombies.length < 20 && Date.now()-timeLastSpawned>timeBetweenSpawns) {
+        if (zombies.length < 20+score && Date.now()-timeLastSpawned>timeBetweenSpawns) {
             timeLastSpawned=Date.now();
             zombies.push(new Zombie(zombieDir[0], 0, Math.floor(Math.random()*(windowHeight-200))+100, 1));
             zombies.push(new Zombie(zombieDir[1], windowWidth, Math.floor(Math.random()*(windowHeight-200))+100, 1));
@@ -479,7 +479,6 @@ function draw() {
         for (const zombie of zombies) {
             projectilesTemp=[];
             let dead = false;
-
             for (const projectile of projectiles) {
                 if (collision(zombie, projectile)) {
                     dead = true;
