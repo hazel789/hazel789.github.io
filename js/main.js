@@ -46,7 +46,7 @@ let landminesTemp = [];
 function preload() {
     fontRegular = loadFont('Assets/PixelGameFont.ttf');
     mouseclick = loadSound('Assets/mouse-click.mp3')
-    song = loadSound('Assets/bensound-funnysong.mp3');
+    song = loadSound('Assets/aBitOfHope.mp3');
     gunshot = loadSound('Assets/gunshot.mp3');
     explosionSound = loadSound('Assets/explosion1.mp3');
   }
@@ -267,7 +267,7 @@ function toPlay() {
 
     mouseclick.play();
     gameState = 'play';
-    song.setVolume(0.8);
+    song.setVolume(0.5);
     song.play();
     console.log('toplay');
 
