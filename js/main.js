@@ -20,6 +20,8 @@ let zombieBack;
 let zombieLeft;
 let zombieRight;
 let backgroundImg;
+let landmineImg;
+let explosionImg
 let projectileImg;
 let timeLastShot;
 let timeBetweenShots;
@@ -32,14 +34,17 @@ let player;
 let projectiles = []; 
 let zombies = [];
 const zombieDir = [0,1,2,3];
-let zombiesTemp;
-let projectilesTemp;
+let zombiesTemp = [];
+let projectilesTemp = [];
+let landmines = [];
+let landminesTemp = [];
 
 
 //////////////////////////////////////////////// GAME SET-UP /////////////////////////////////////////////////////////////////
 
 function preload() {
     fontRegular = loadFont('Assets/PixelGameFont.ttf');
+    //gif_loadImg = loadImage('Assets/explosion7.gif');
   }
 
 function setup() {
@@ -60,17 +65,21 @@ function setup() {
     zombieBack = loadImage('Assets/zombieBack.png');
     backgroundImg = loadImage('Assets/background.png');
     projectileImg = loadImage('Assets/projectile.png');
+    landmineImg = loadImage('Assets/landmine.png');
+    explosionImg = loadImage('Assets/explosion1.gif');
     
     
     timeLastShot=Date.now();
     timeBetweenShots=100;
     timeLastSpawned=Date.now();
     timeBetweenSpawns=500;
+    timeLastMined=Date.now();
+    timeBetweenMines=2000;
 
     player = new Player(2, windowWidth/2, windowHeight/2)
     gameState = 'start'; 
     renderStartDone = false;
-    renderedGameOver = false
+    renderedGameOver = false;
 
 }
 
@@ -110,7 +119,7 @@ class Zombie {
         this.posY=posY
         this.speed=speed
         this.radius=radius
-        this.speed = speed + score;
+        this.speed = speed + 0.5*score;
 
         if (direction===0) {  // left
             this.img=zombieRight;
@@ -194,6 +203,23 @@ class Projectile {
     }
 }
 
+class Landmine {
+    constructor(posX, posY, radius=20) {
+        this.posX = posX
+        this.posY=posY
+        this.radius=radius
+        this.img=landmineImg
+        this.timeToExplode = Date.now() + 5000;
+    }
+
+    explode() {
+        this.img=explosionImg;
+        this.radius=100;
+    }
+    stopExploding () {
+        this.img = null;
+    }
+}
 
 //////////////////////////////////////////////// GAME STATES /////////////////////////////////////////////////////////////////
 
@@ -204,7 +230,7 @@ function renderImagesStart() {
     if (renderStartDone) {
         return;
     }
-    startDiv = createDiv('Welcome to Boxhead 2');
+    startDiv = createDiv('Welcome to Dreamland');
     startImg = createImg('Assets/startImage2.png');
     instructionsLeft = createImg('Assets/instructionsLeft.png');
     instructionsRight = createImg('Assets/instructionsRight.png');
@@ -268,6 +294,7 @@ function gameOver() {
 
     zombies = [];
     projectiles = [];
+    landmines=[];
     player = new Player(2, windowWidth/2, windowHeight/2);
     renderedGameOver = true;
 }
@@ -362,6 +389,9 @@ function collision(obj1, obj2) {
 
     if (obj2 === player) {
         d = dist(obj1.posX+17.5, obj1.posY+15, obj2.posX+16.5, obj2.posY+24); 
+    
+    } else if(obj2 instanceof Landmine) {
+        d=dist(obj1.posX+17.5, obj1.posY+15, obj2.posX+50, obj2.posY+20); 
 
     } else {
         d = dist(obj1.posX+17.5, obj1.posY+15, obj2.posX+6, obj2.posY+6); 
@@ -405,6 +435,39 @@ function draw() {
             }
         }
         projectiles = projectileTemp2;
+
+        if (keyIsDown(83) && (Date.now()-timeLastMined) > timeBetweenMines) {
+            timeLastMined=Date.now();
+            landmines.push(new Landmine(player.posX, player.posY+30));
+        }
+
+        //landminesTemp=[];
+
+        for (landmine of landmines) {
+            image(landmine.img, landmine.posX, landmine.posY, 15, 15); 
+
+            if (landmine.timeToExplode < Date.now() && landmine.timeToExplode+1000>Date.now()) {
+                landmine.explode();
+                image(landmine.img, landmine.posX-50, landmine.posY-50, 150, 150);
+                console.log(landmines);
+
+                let zombiesTemp2 =[];
+
+                for (const zombie of zombies) {
+                    let dead = false;
+
+                    if (collision(zombie, landmine)) {
+                        dead=true;
+                        score+=1
+                        scoreDiv.elt.innerText = `score: ${score}`
+                    } 
+                    if (!dead) {
+                        zombiesTemp2.push(zombie);
+                    }
+                }
+                zombies = zombiesTemp2;
+            }
+        }
 
         if (zombies.length < 20 && Date.now()-timeLastSpawned>timeBetweenSpawns) {
             timeLastSpawned=Date.now();
