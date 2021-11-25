@@ -70,7 +70,7 @@ function setup() {
     
     
     timeLastShot=Date.now();
-    timeBetweenShots=100;
+    timeBetweenShots=300;
     timeLastSpawned=Date.now();
     timeBetweenSpawns=500;
     timeLastMined=Date.now();
@@ -215,9 +215,6 @@ class Landmine {
     explode() {
         this.img=explosionImg;
         this.radius=100;
-    }
-    stopExploding () {
-        this.img = null;
     }
 }
 
@@ -446,7 +443,7 @@ function draw() {
         for (landmine of landmines) {
             image(landmine.img, landmine.posX, landmine.posY, 15, 15); 
 
-            if (landmine.timeToExplode < Date.now() && landmine.timeToExplode+1000>Date.now()) {
+            if (landmine.timeToExplode < Date.now() && landmine.timeToExplode+600>Date.now()) {
                 landmine.explode();
                 image(landmine.img, landmine.posX-50, landmine.posY-50, 150, 150);
                 console.log(landmines);
