@@ -74,7 +74,7 @@ function setup() {
     timeLastSpawned=Date.now();
     timeBetweenSpawns=500;
     timeLastMined=Date.now();
-    timeBetweenMines=2000;
+    timeBetweenMines=1000;
 
     player = new Player(2, windowWidth/2, windowHeight/2)
     gameState = 'start'; 
@@ -277,9 +277,11 @@ function gameOver() {
     }
     removeElements();
 
-    deadImg = createImg('Assets/playerDead.png');
+    deadImg = createImg('Assets/playerDead2.png');
     endButton = createButton('Restart?');
     endDiv = createDiv('Game Over');
+    tips = createImg('Assets/tip1.png');
+    tips.position(120, windowHeight/2 - 90);
     showScoreDiv = createDiv(`score: ${score}`);
     showScoreDiv.addClass('scoreDiv');
     
@@ -298,6 +300,7 @@ function gameOver() {
 
 
 //////////////////////////////////////////////// GAME PLAY FUNCTIONS ////////////////////////////////////////////////////////////
+
 
 function keyDown() {
 
@@ -466,7 +469,7 @@ function draw() {
             }
         }
 
-        if (zombies.length < 20+score && Date.now()-timeLastSpawned>timeBetweenSpawns) {
+        if (zombies.length < 20 + 0.5*score && Date.now()-timeLastSpawned>timeBetweenSpawns) {
             timeLastSpawned=Date.now();
             zombies.push(new Zombie(zombieDir[0], 0, Math.floor(Math.random()*(windowHeight-200))+100, 1));
             zombies.push(new Zombie(zombieDir[1], windowWidth, Math.floor(Math.random()*(windowHeight-200))+100, 1));
