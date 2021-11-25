@@ -35,6 +35,9 @@ const zombieDir = [0,1,2,3];
 let zombiesTemp;
 let projectilesTemp;
 
+
+//////////////////////////////////////////////// GAME SET-UP /////////////////////////////////////////////////////////////////
+
 function preload() {
     fontRegular = loadFont('Assets/PixelGameFont.ttf');
   }
@@ -70,6 +73,13 @@ function setup() {
     renderedGameOver = false
 
 }
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+}
+
+
+//////////////////////////////////////////////// CLASSES /////////////////////////////////////////////////////////////////////
 
 class Player {
     constructor(playerDir, posX, posY, radius=20) {
@@ -185,24 +195,26 @@ class Projectile {
 }
 
 
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-}
+//////////////////////////////////////////////// GAME STATES /////////////////////////////////////////////////////////////////
 
 
 function renderImagesStart() {
     image(startBackground, 0, 0, windowWidth, windowHeight);
 
     if (renderStartDone) {
-        return 
+        return;
     }
-
     startDiv = createDiv('Welcome to Boxhead 2');
     startImg = createImg('Assets/startImage2.png');
+    instructionsLeft = createImg('Assets/instructionsLeft.png');
+    instructionsRight = createImg('Assets/instructionsRight.png');
     startButton = createButton('Start Game!');
-    startImg.position(windowWidth/2- 120, windowHeight/2 - 60);
-    startDiv.position(windowWidth/2 - 500, windowHeight/2 - 200);
-    startButton.position(windowWidth/2 - 180, windowHeight/2 + 100);
+
+    startImg.position(windowWidth/2- 110, windowHeight/2 - 60);
+    instructionsLeft.position(200, windowHeight/2 - 90);
+    instructionsRight.position(windowWidth-500, windowHeight/2 - 70);
+    startDiv.position(windowWidth/2 - 470, windowHeight/2 - 220);
+    startButton.position(windowWidth/2 - 170, windowHeight/2 + 100);
     startButton.mousePressed(toPlay);
     renderStartDone = true;
 }
@@ -250,8 +262,8 @@ function gameOver() {
     
     endDiv.position(windowWidth/2-240, windowHeight/2 - 200);
     deadImg.position(windowWidth/2-100, windowHeight/2-60);
-    endButton.position(windowWidth/2-160, windowHeight/2 + 100);
-    showScoreDiv.position(windowWidth/2-80, windowHeight/2 + 30);
+    endButton.position(windowWidth/2-170, windowHeight/2 + 100);
+    showScoreDiv.position(windowWidth/2-90, windowHeight/2 + 30);
     endButton.mousePressed(toPlay);
 
     zombies = [];
@@ -260,9 +272,11 @@ function gameOver() {
     renderedGameOver = true;
 }
 
+
+//////////////////////////////////////////////// GAME PLAY FUNCTIONS ////////////////////////////////////////////////////////////
+
 function keyDown() {
 
-    
     if (keyIsDown(RIGHT_ARROW)) {
         player.playerDir = 0;
         if(player.img===playerRight) {
@@ -359,6 +373,9 @@ function collision(obj1, obj2) {
         return false
     }
 }
+
+
+//////////////////////////////////////////////// DRAW FUNCTION ////////////////////////////////////////////////////////////
 
 function draw() {
 
